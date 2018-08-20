@@ -21,7 +21,7 @@ public class SyncPrimitive implements Watcher {
             try {
                 System.out.println("Starting ZK:");
                 zk = new ZooKeeper(address, 3000, this);
-                mutex = new Integer(-1);
+                mutex = -1;
                 System.out.println("Finished starting ZK: " + zk);
             } catch (IOException e) {
                 System.out.println(e.toString());
@@ -32,14 +32,20 @@ public class SyncPrimitive implements Watcher {
     }
 
     public static void main(String args[]) {
-        if (args[0].equals("qTest"))
-            queueTest(args);
-        else if (args[0].equals("barrier"))
-            barrierTest(args);
-        else if (args[0].equals("lock"))
-            lockTest(args);
-        else
-            System.err.println("Unkonw option");
+        switch (args[0]) {
+            case "qTest":
+                queueTest(args);
+                break;
+            case "barrier":
+                barrierTest(args);
+                break;
+            case "lock":
+                lockTest(args);
+                break;
+            default:
+                System.err.println("Unkonw option");
+                break;
+        }
     }
 
     public static void queueTest(String args[]) {
@@ -54,9 +60,7 @@ public class SyncPrimitive implements Watcher {
             for (i = 0; i < max; i++)
                 try {
                     q.produce(10 + i);
-                } catch (KeeperException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
+                } catch (KeeperException | InterruptedException e) {
                     e.printStackTrace();
                 }
         } else {
@@ -81,10 +85,8 @@ public class SyncPrimitive implements Watcher {
             boolean flag = b.enter();
             System.out.println("Entered barrier: " + args[2]);
             if (!flag) System.out.println("Error when entering the barrier");
-        } catch (KeeperException e) {
-
-        } catch (InterruptedException e) {
-
+        } catch (KeeperException | InterruptedException e) {
+            e.printStackTrace();
         }
 
         // Generate random integer
@@ -100,10 +102,8 @@ public class SyncPrimitive implements Watcher {
         }
         try {
             b.leave();
-        } catch (KeeperException e) {
-
-        } catch (InterruptedException e) {
-
+        } catch (KeeperException | InterruptedException e) {
+            e.printStackTrace();
         }
         System.out.println("Left barrier");
     }
@@ -119,9 +119,7 @@ public class SyncPrimitive implements Watcher {
                     //Waiting for a notification
                 }
             }
-        } catch (KeeperException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (KeeperException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -170,7 +168,7 @@ public class SyncPrimitive implements Watcher {
 
             // My node name
             try {
-                name = new String(InetAddress.getLocalHost().getCanonicalHostName().toString());
+                name = InetAddress.getLocalHost().getCanonicalHostName().toString();
             } catch (UnknownHostException e) {
                 System.out.println(e.toString());
             }
