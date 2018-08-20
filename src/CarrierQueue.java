@@ -54,7 +54,7 @@ public class CarrierQueue extends SyncPrimitive.Queue{
     }
 
     /**
-     * Constructor of producer-consumer queue
+     * Queue adder method
      *
      * @param queueType: To insert into priority queue or normal queue
      * @param message: The message to store in
@@ -73,6 +73,10 @@ public class CarrierQueue extends SyncPrimitive.Queue{
         return false;
     }
 
+    /**
+     * Queue getter method
+     * @description: Choose where to get next item based on the priority queue. If the length of priorityQueue > 0, then retrieve from it.
+     */
     public String get() throws KeeperException, InterruptedException {
         String retvalue;
         Stat stat = null;
@@ -115,5 +119,4 @@ public class CarrierQueue extends SyncPrimitive.Queue{
         }
         return null;
     }
-
 }
